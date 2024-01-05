@@ -39,16 +39,13 @@ scene.add(light);
 
 // dancer import
 const loader = new GLTFLoader();
-// loader.load("/dancer.glb", (data) => {
-//   const dancer = data.scene;
-//   dancer.position.y = 0.8;
-//   dancer.scale.set(0.01, 0.01, 0.01);
-//   scene.add(dancer);
-// });
+
 const gltf = await loader.loadAsync("/dancer.glb");
 const dancer = gltf.scene;
+const dancerAnimationClips = gltf.animations;
 dancer.position.y = 0.8;
 dancer.scale.set(0.01, 0.01, 0.01);
+
 // 그림자 생성
 dancer.castShadow = true;
 dancer.receiveShadow = true;
@@ -58,6 +55,13 @@ dancer.traverse((obj) => {
     obj.receiveShadow = true;
   }
 });
+
+console.log(gltf, "dancer");
+
+// 애니메이션
+const mixer = new THREE.AnimationMixer(dancer);
+const action = mixer.clipAction(dancerAnimationClips[3]);
+action.play();
 
 scene.add(dancer);
 
@@ -70,8 +74,13 @@ document.body.appendChild(renderer.domElement);
 const control = new OrbitControls(camera, renderer.domElement);
 control.update();
 
+const clock = new THREE.Clock();
+
 const render = () => {
   renderer.render(scene, camera);
+  if (mixer) {
+    mixer.update(clock.getDelta());
+  }
   requestAnimationFrame(render);
 };
 

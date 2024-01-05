@@ -39,12 +39,17 @@ scene.add(light);
 
 // dancer import
 const loader = new GLTFLoader();
-loader.load("/dancer.glb", (data) => {
-  const dancer = data.scene;
-  dancer.position.y = 0.8;
-  dancer.scale.set(0.01, 0.01, 0.01);
-  scene.add(dancer);
-});
+// loader.load("/dancer.glb", (data) => {
+//   const dancer = data.scene;
+//   dancer.position.y = 0.8;
+//   dancer.scale.set(0.01, 0.01, 0.01);
+//   scene.add(dancer);
+// });
+const gltf = await loader.loadAsync("/dancer.glb");
+const dancer = gltf.scene;
+dancer.position.y = 0.8;
+dancer.scale.set(0.01, 0.01, 0.01);
+scene.add(dancer);
 
 // scene.add(came)
 const renderer = new THREE.WebGLRenderer({ antialias: true });

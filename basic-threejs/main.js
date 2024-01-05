@@ -49,6 +49,16 @@ const gltf = await loader.loadAsync("/dancer.glb");
 const dancer = gltf.scene;
 dancer.position.y = 0.8;
 dancer.scale.set(0.01, 0.01, 0.01);
+// 그림자 생성
+dancer.castShadow = true;
+dancer.receiveShadow = true;
+dancer.traverse((obj) => {
+  if (obj.isMesh) {
+    obj.castShadow = true;
+    obj.receiveShadow = true;
+  }
+});
+
 scene.add(dancer);
 
 // scene.add(came)

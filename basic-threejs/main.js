@@ -61,6 +61,17 @@ console.log(gltf, "dancer");
 // 애니메이션
 const mixer = new THREE.AnimationMixer(dancer);
 const action = mixer.clipAction(dancerAnimationClips[3]);
+
+// animation loop options
+
+// action.setLoop(THREE.LoopOnce); // 애니메이션 한 번만 실행
+// action.setLoop(THREE.LoopRepeat); // 애니메이션 무한 반복
+action.setLoop(THREE.LoopPingPong); // 재생 -> 역재생 -> 재생 -> 역재생
+
+// animation duration
+// action.setDuration(10) // 10s동안 애니메이션 실행
+// action.setEffectiveTimeScale(2) // 재생 속력 비율 설정
+// action.setEffectiveWeight(100); // 애니메이션의 선명도
 action.play();
 
 scene.add(dancer);

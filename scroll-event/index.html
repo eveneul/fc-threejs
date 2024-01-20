@@ -11,10 +11,29 @@
         padding: 0;
         box-sizing: border-box;
       }
+
+      canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      span {
+        position: relative;
+        font-size: 6vmin;
+        font-weight: bold;
+        text-align: center;
+        width: 100%;
+        display: block;
+        padding-top: 10vh;
+      }
     </style>
   </head>
   <body>
     <canvas></canvas>
+    <span>Three.js</span>
     <script type="module" src="/main.js"></script>
   </body>
 </html>

@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { convertLatLngToPos } from "./utils";
 
 const canvasSize = {
   width: window.innerWidth,
@@ -38,6 +39,9 @@ const createEarth1 = () => {
   });
   const geometry = new THREE.SphereGeometry(1.3, 30, 30);
   const mesh = new THREE.Mesh(geometry, material);
+
+  mesh.rotation.y = -Math.PI / 2;
+
   // scene.add(mesh);
 
   return mesh;
@@ -82,12 +86,52 @@ const createStar = (count = 500) => {
   return star;
 };
 
+const createPoint = () => {
+  const point = {
+    lat: 37.56668 * (Math.PI / 180), // 위도
+    lng: 126.97841 * (Math.PI / 180), // 경도
+  };
+
+  const position = convertLatLngToPos(point, 1.3); // 1.3은 안쪽 지구 반지금
+  console.log(position);
+
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.03, 20, 20),
+    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+  );
+
+  mesh.position.set(position.x, position.y, position.z);
+
+  return mesh;
+};
+
+const createPoint2 = () => {
+  const point = {
+    lat: 5.55363 * (Math.PI / 180),
+    lng: -0.196481 * (Math.PI / 180),
+  };
+
+  const position = convertLatLngToPos(point, 1.3); // 1.3은 안쪽 지구 반지금
+  console.log(position);
+
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.03, 20, 20),
+    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+  );
+
+  mesh.position.set(position.x, position.y, position.z);
+
+  return mesh;
+};
+
 const create = () => {
   const earth1 = createEarth1();
   const earth2 = createEarth2();
   const star = createStar();
+  const point1 = createPoint();
+  const point2 = createPoint2();
 
-  scene.add(earth1, earth2, star);
+  scene.add(earth1, earth2, star, point1, point2);
 
   return { earth1, earth2, star };
 };
@@ -119,14 +163,14 @@ const draw = (obj) => {
   controls.update();
   const { earth1, earth2, star } = obj;
 
-  earth1.rotation.x += 0.0005;
-  earth1.rotation.y += 0.0005;
+  // earth1.rotation.x += 0.0005;
+  // earth1.rotation.y += 0.0005;
 
-  earth2.rotation.x += 0.0005;
-  earth2.rotation.y += 0.0005;
+  // earth2.rotation.x += 0.0005;
+  // earth2.rotation.y += 0.0005;
 
-  star.rotation.x += 0.001;
-  star.rotation.y += 0.001;
+  // star.rotation.x += 0.001;
+  // star.rotation.y += 0.001;
 };
 
 const init = () => {

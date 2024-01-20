@@ -1,6 +1,12 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { convertLatLngToPos, getGradientCanvas } from "./utils";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { FilmPass } from "three/examples/jsm/postprocessing/FilmPass";
+import { GlitchPass } from "three/examples/jsm/postprocessing/GlitchPass";
+import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectionShader"; // 필름패스 쓰면 너무 어두워져서
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass"; // 쉐이더 쓰려면
 
 const canvasSize = {
   width: window.innerWidth,
@@ -172,6 +178,25 @@ const addLight = () => {
   scene.add(light);
 };
 
+// 포스트 프로세성 EffectComposer
+const effectComposer = new EffectComposer(renderer);
+
+// render pass
+const addPostEffects = () => {
+  const renderPass = new RenderPass(scene, camera);
+  effectComposer.addPass(renderPass);
+
+  const filmPass = new FilmPass(
+    1, // 노이즈 강도 0: 낮게
+    false // 흑백 (boolean) // 노이즈효과
+  );
+
+  effectComposer.addPass(filmPass);
+
+  const shaderPass = new ShaderPass(GammaCorrectionShader);
+  effectComposer.addPass(shaderPass);
+};
+
 const container = document.querySelector(".container");
 container.appendChild(renderer.domElement);
 
@@ -188,9 +213,10 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
 const draw = (obj) => {
-  renderer.render(scene, camera);
   requestAnimationFrame(() => draw(obj));
+  // renderer.render(scene, camera);
   controls.update();
+  effectComposer.render();
   const { group, star } = obj;
 
   group.rotation.x += 0.0005;
@@ -204,6 +230,7 @@ const init = () => {
   const obj = create();
   draw(obj);
   addLight();
+  addPostEffects();
 };
 
 const resize = () => {
@@ -213,6 +240,8 @@ const resize = () => {
   camera.aspect = canvasSize.width / canvasSize.height;
   camera.updateProjectionMatrix();
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  effectComposer.setSize(canvasSize.width, canvasSize.height);
 };
 
 window.addEventListener("resize", resize);

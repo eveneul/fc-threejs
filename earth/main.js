@@ -57,11 +57,39 @@ const createEarth2 = () => {
   return mesh;
 };
 
+const createStar = (count = 500) => {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    positions[i] = (Math.random() - 0.5) * 5; // -3 ~ 3
+    positions[i + 1] = (Math.random() - 0.5) * 5; // -3 ~ 3
+    positions[i + 2] = (Math.random() - 0.5) * 5; // -3 ~ 3
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  const material = new THREE.PointsMaterial({
+    size: 0.01,
+    transparent: true,
+    map: textureLoader.load("/assets/particles/particle.png"),
+    alphaMap: textureLoader.load("/assets/particles/particle.png"),
+    depthWrite: false, // alphaMap 지정하면 앞에 있는 메터리얼이 뒤에 있는 거 가리게 됨, 그거 해결 방법
+    color: 0xbcc6c6,
+  });
+
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+  const star = new THREE.Points(geometry, material);
+
+  return star;
+};
+
 const create = () => {
   const earth1 = createEarth1();
   const earth2 = createEarth2();
+  const star = createStar();
 
-  scene.add(earth1, earth2);
+  scene.add(earth1, earth2, star);
+
+  return { earth1, earth2, star };
 };
 
 const addLight = () => {
@@ -79,21 +107,31 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.z = 5;
+camera.position.z = 3;
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
-const draw = () => {
+const draw = (obj) => {
   renderer.render(scene, camera);
-  requestAnimationFrame(draw);
+  requestAnimationFrame(() => draw(obj));
   controls.update();
+  const { earth1, earth2, star } = obj;
+
+  earth1.rotation.x += 0.0005;
+  earth1.rotation.y += 0.0005;
+
+  earth2.rotation.x += 0.0005;
+  earth2.rotation.y += 0.0005;
+
+  star.rotation.x += 0.001;
+  star.rotation.y += 0.001;
 };
 
 const init = () => {
-  draw();
-  create();
+  const obj = create();
+  draw(obj);
   addLight();
 };
 

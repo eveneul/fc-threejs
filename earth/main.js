@@ -5,6 +5,12 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { FilmPass } from "three/examples/jsm/postprocessing/FilmPass";
 import { GlitchPass } from "three/examples/jsm/postprocessing/GlitchPass";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass"; // 빛의 노출값을 조정
+import { AfterimagePass } from "three/examples/jsm/postprocessing/AfterimagePass";
+import { HalftonePass } from "three/examples/jsm/postprocessing/HalftonePass";
+import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass";
+import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass"; // outline pass 테두리 부드럽게
+
 import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectionShader"; // 필름패스 쓰면 너무 어두워져서
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass"; // 쉐이더 쓰려면
 
@@ -18,6 +24,14 @@ const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(canvasSize.width, canvasSize.height);
 // 현재 디바이스 픽셀의 비율에 맞는 값
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const renderTarget = new THREE.WebGLRenderTarget(
+  canvasSize.width,
+  canvasSize.height,
+  {
+    samples: 2, // 점과 점 사이를 더 부드럽게
+  }
+);
 
 const textureLoader = new THREE.TextureLoader();
 const cubeTextureLoader = new THREE.CubeTextureLoader();
@@ -99,7 +113,6 @@ const createPoint = () => {
   };
 
   const position = convertLatLngToPos(point, 1.3); // 1.3은 안쪽 지구 반지금
-  console.log(position);
 
   const mesh = new THREE.Mesh(
     new THREE.TorusGeometry(0.02, 0.002, 20, 20),
@@ -179,22 +192,62 @@ const addLight = () => {
 };
 
 // 포스트 프로세성 EffectComposer
-const effectComposer = new EffectComposer(renderer);
+const effectComposer = new EffectComposer(renderer, renderTarget);
 
 // render pass
-const addPostEffects = () => {
+const addPostEffects = (obj) => {
+  const { group, star } = obj;
   const renderPass = new RenderPass(scene, camera);
   effectComposer.addPass(renderPass);
 
-  const filmPass = new FilmPass(
-    1, // 노이즈 강도 0: 낮게
-    false // 흑백 (boolean) // 노이즈효과
-  );
+  // const filmPass = new FilmPass(
+  //   1, // 노이즈 강도 0: 낮게
+  //   false // 흑백 (boolean) // 노이즈효과
+  // );
 
-  effectComposer.addPass(filmPass);
+  // effectComposer.addPass(filmPass);
+
+  // const glitchPass = new GlitchPass();
+  // glitchPass.goWild = true; // 글리치 효과 세게
+  // effectComposer.addPass(glitchPass);
+
+  // const afterimagePass = new AfterimagePass(0.94); // 모든 매쉬들이 이동하는 궤적을 다 보여 줌 (파티클이 유성처럼)
+  // effectComposer.addPass(afterimagePass);
+
+  // const halftonePass = new HalftonePass(canvasSize.width, canvasSize.height, {
+  //   // 팝아트 느낌
+  //   radius: 10, // 점의 사이즈가 커짐
+  //   shape: 1, // 점의 모양 결정 (타원으로)
+  //   scatter: 0, // 점들이 흩어지는 모양
+  //   blending: 1, // 0 ~ 1
+  // });
+  // effectComposer.addPass(halftonePass);
+
+  // const unrealBloomPass = new UnrealBloomPass( // 뽀샤시
+  //   new THREE.Vector2(canvasSize.width, canvasSize.height)
+  // );
+  // unrealBloomPass.strength = 20; // 밝기 정도
+  // unrealBloomPass.threshold = 0.03; // 사물의 빛나는 영역 조절
+  // unrealBloomPass.radius = 0.9;
+  // // effectComposer.addPass(unrealBloomPass); // 감마 패스 끄고 사용 (너무 뽀샤시해짐)
+
+  const outlinePass = new OutlinePass(
+    new THREE.Vector2(canvasSize.width, canvasSize.height),
+    scene,
+    camera
+  );
+  outlinePass.selectedObjects = [...group.children];
+  // outlinePass.edgeGlow = 3; // 테두리  글로우
+  // outlinePass.edgeStrength = 1; // 테두리 굵기
+  // outlinePass.pulsePeriod = 5; // 테두리가 굵어졌다가 안 굵어졌다가
+
+  effectComposer.addPass(outlinePass);
 
   const shaderPass = new ShaderPass(GammaCorrectionShader);
   effectComposer.addPass(shaderPass);
+
+  const smaaPass = new SMAAPass(); // outline에게도 스트로크가 부드럽게
+  effectComposer.addPass(smaaPass);
 };
 
 const container = document.querySelector(".container");
@@ -229,8 +282,8 @@ const draw = (obj) => {
 const init = () => {
   const obj = create();
   draw(obj);
+  addPostEffects(obj);
   addLight();
-  addPostEffects();
 };
 
 const resize = () => {

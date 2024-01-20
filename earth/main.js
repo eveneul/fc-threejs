@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { convertLatLngToPos } from "./utils";
+import { convertLatLngToPos, getGradientCanvas } from "./utils";
 
 const canvasSize = {
   width: window.innerWidth,
@@ -96,11 +96,12 @@ const createPoint = () => {
   console.log(position);
 
   const mesh = new THREE.Mesh(
-    new THREE.SphereGeometry(0.03, 20, 20),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    new THREE.TorusGeometry(0.02, 0.002, 20, 20),
+    new THREE.MeshBasicMaterial({ color: 0x263d64 })
   );
 
   mesh.position.set(position.x, position.y, position.z);
+  mesh.rotation.set(0.9, 2.46, 1);
 
   return mesh;
 };
@@ -112,11 +113,10 @@ const createPoint2 = () => {
   };
 
   const position = convertLatLngToPos(point, 1.3); // 1.3은 안쪽 지구 반지금
-  console.log(position);
 
   const mesh = new THREE.Mesh(
-    new THREE.SphereGeometry(0.03, 20, 20),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    new THREE.TorusGeometry(0.02, 0.002, 20, 20),
+    new THREE.MeshBasicMaterial({ color: 0x263d64 })
   );
 
   mesh.position.set(position.x, position.y, position.z);
@@ -124,16 +124,46 @@ const createPoint2 = () => {
   return mesh;
 };
 
+const createCurve = (pos1, pos2) => {
+  const points = [];
+  for (let i = 0; i < 100; i++) {
+    //pos1와 pos2 사이에 어떤 숫자가 있을지 잘 추정해서 반환함
+    const pos = new THREE.Vector3().lerpVectors(pos1, pos2, i / 100);
+    pos.normalize();
+    const wave = Math.sin((Math.PI * i) / 100);
+
+    pos.multiplyScalar(1.3 + 0.3 * wave); // 지구 반지름 크기를 넣어 주면 반지름 크기에 맞게 이동 / 변형
+
+    points.push(pos);
+  }
+
+  const gradientCanvas = getGradientCanvas("#757f94", "#263d74");
+  const texture = new THREE.CanvasTexture(gradientCanvas);
+
+  // CatmullRomCurve3 ::  3d 스플라인 커브를 만들 때 사용
+  const curve = new THREE.CatmullRomCurve3(points);
+  const geometry = new THREE.TubeGeometry(curve, 20, 0.003);
+  const material = new THREE.MeshBasicMaterial({ map: texture });
+  const mesh = new THREE.Mesh(geometry, material);
+
+  return mesh;
+};
+
 const create = () => {
+  const group = new THREE.Group();
+
   const earth1 = createEarth1();
   const earth2 = createEarth2();
   const star = createStar();
   const point1 = createPoint();
   const point2 = createPoint2();
+  const curve = createCurve(point1.position, point2.position);
 
-  scene.add(earth1, earth2, star, point1, point2);
+  group.add(earth1, earth2, point1, point2, curve);
 
-  return { earth1, earth2, star };
+  scene.add(star, group);
+
+  return { group, star };
 };
 
 const addLight = () => {
@@ -161,16 +191,13 @@ const draw = (obj) => {
   renderer.render(scene, camera);
   requestAnimationFrame(() => draw(obj));
   controls.update();
-  const { earth1, earth2, star } = obj;
+  const { group, star } = obj;
 
-  // earth1.rotation.x += 0.0005;
-  // earth1.rotation.y += 0.0005;
+  group.rotation.x += 0.0005;
+  group.rotation.y += 0.0005;
 
-  // earth2.rotation.x += 0.0005;
-  // earth2.rotation.y += 0.0005;
-
-  // star.rotation.x += 0.001;
-  // star.rotation.y += 0.001;
+  star.rotation.x += 0.001;
+  star.rotation.y += 0.001;
 };
 
 const init = () => {

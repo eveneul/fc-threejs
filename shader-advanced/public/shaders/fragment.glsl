@@ -1,5 +1,4 @@
 //precision mediump float; 정밀도를 미디엄으로 설정
-precision mediump float;
 
 uniform sampler2D uTexture;
 

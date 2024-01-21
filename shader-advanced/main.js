@@ -45,7 +45,7 @@ class App {
     // scene.add(cube.mesh);
 
     const geometry = new THREE.PlaneGeometry(1, 965 / 720, 16, 16);
-    const material = new THREE.RawShaderMaterial({
+    const material = new THREE.ShaderMaterial({
       color: 0x00ff00,
       wireframe: false,
       side: THREE.DoubleSide,

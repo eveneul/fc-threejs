@@ -26,6 +26,12 @@ class App {
     const scene = new THREE.Scene();
 
     /**
+     * Clock
+     */
+
+    const clock = new THREE.Clock();
+
+    /**
      * Object
      */
 
@@ -37,6 +43,9 @@ class App {
       color: 0x00ff00,
       wireframe: false,
       side: THREE.DoubleSide,
+      uniforms: {
+        uTime: { value: 0 },
+      },
       vertexShader,
       fragmentShader,
     });
@@ -75,7 +84,7 @@ class App {
       0.1,
       100
     );
-    camera.position.z = 20;
+    camera.position.z = 10;
 
     /**
      * Controls
@@ -98,10 +107,12 @@ class App {
     this.sizes = sizes;
     this.scene = scene;
     this.light = light;
+    this.material = material;
     this.mesh = mesh;
     this.camera = camera;
     this.controls = controls;
     this.renderer = renderer;
+    this.clock = clock;
   }
 
   update() {}
@@ -109,6 +120,9 @@ class App {
   render() {
     this.update();
     this.renderer.render(this.scene, this.camera);
+
+    this.material.uniforms.uTime.value = this.clock.getElapsedTime();
+
     requestAnimationFrame(this.render.bind(this));
     this.controls.update();
   }

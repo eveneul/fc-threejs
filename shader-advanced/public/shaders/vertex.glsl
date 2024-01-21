@@ -8,19 +8,18 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
+uniform float uTime;
 
 attribute vec3 position;
 attribute float aRandomPosition;
 varying float vRandomPosition;
 
- 
-
 
 void main() {
   vec4 modelPosition = modelViewMatrix * vec4(position, 0.1);
-  modelPosition.z += aRandomPosition;
+  modelPosition.z += aRandomPosition / uTime;
 
   vRandomPosition = (aRandomPosition + 1.0) / 2.0;
 
-  gl_Position = projectionMatrix * modelPosition;
+  gl_Position = projectionMatrix * viewMatrix * modelPosition;
 }

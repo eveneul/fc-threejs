@@ -12,6 +12,8 @@ import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectio
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 import GUI from "lil-gui";
+import vertexShader from "./shaders/vertex.glsl";
+import fragmentShader from "./shaders/fragment.glsl";
 
 // sizes
 const sizes = { width: window.innerWidth, height: window.innerHeight };
@@ -116,47 +118,14 @@ const postProcessing = () => {
   const customShaderPass = new ShaderPass({
     uniforms: {
       uPosition: { value: new THREE.Vector2(0, 0) },
-      uColor: { value: new THREE.Vector3(0, 0, 0.3) },
+      uColor: { value: new THREE.Vector3(0, 0, 0.15) },
       uAlpha: { value: 0.5 },
       tDiffuse: { value: null },
+      uBrightness: { value: 0.3 },
     },
-    vertexShader: /* 정점 셰이더 */ `
-      varying vec2 vPosition;
-      varying vec2 vUv;
-
-      void main() {
-        gl_Position = vec4(position.x, position.y, 0.0, 1.0);
-        vPosition = position.xy;
-        vUv = uv;
-      }
-    `,
-    fragmentShader: /* 색상 셰이더 */ `
-      uniform vec3 uColor;
-      uniform float uAlpha;
-      uniform sampler2D tDiffuse;
-      uniform vec2 uPosition;
-      varying vec2 vPosition;
-      varying vec2 vUv;
-
-      void main() {
-        vec2 newUV = vec2(vUv.x, vUv.y + sin(vUv.x * 20.0) * 0.1 + uPosition.y);
-        vec4 tex = texture2D(tDiffuse, newUV);
-        tex.rgb += uColor;
-        gl_FragColor = tex;
-      }
-    `,
+    vertexShader,
+    fragmentShader,
   });
-
-  gui
-    .add(customShaderPass.uniforms.uPosition.value, "x")
-    .min(-1)
-    .max(1)
-    .step(0.01);
-  gui
-    .add(customShaderPass.uniforms.uPosition.value, "y")
-    .min(-1)
-    .max(1)
-    .step(0.01);
 
   // vUv: 2d 텍스쳐를 3d 텍스쳐로 맵핑할 때 사용되는 좌표 개념
 

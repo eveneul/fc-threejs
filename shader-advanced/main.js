@@ -41,7 +41,20 @@ class App {
       fragmentShader,
     });
     const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.y = 1;
     scene.add(mesh);
+
+    const verticesCount = geometry.attributes.position.count;
+    const randomPositions = new Float32Array(verticesCount);
+
+    for (let i = 0; i < verticesCount; i++) {
+      randomPositions[i] = (Math.random() - 0.5) * 2;
+    }
+
+    geometry.setAttribute(
+      "aRandomPosition",
+      new THREE.BufferAttribute(randomPositions, 1)
+    );
 
     /**
      * Light
@@ -60,7 +73,7 @@ class App {
       0.1,
       100
     );
-    camera.position.z = 8;
+    camera.position.z = 15;
 
     /**
      * Controls

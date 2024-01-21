@@ -10,7 +10,11 @@ uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 
 attribute vec3 position;
+attribute float aRandomPosition;
+
 
 void main() {
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 0.1);
+  vec4 modelPosition = modelViewMatrix * vec4(position, 0.1);
+  modelPosition.y += aRandomPosition;
+  gl_Position = projectionMatrix * modelPosition;
 }

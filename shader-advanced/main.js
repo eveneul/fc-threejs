@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // import Cube from "./components/mesh/Cube";
 import Light from "./components/light/Light";
+import vertexShader from "./public/shaders/vertex.glsl?raw";
+import fragmentShader from "./public/shaders/fragment.glsl?raw";
 
 class App {
   constructor() {
@@ -35,33 +37,8 @@ class App {
       color: 0x00ff00,
       wireframe: false,
       side: THREE.DoubleSide,
-
-      // uniform mat4 projectionMatrix :: 3d를 2d로
-      // uniform mat4 viewMatrix :: 카메라의 정보를 담음
-      // uniform mat4 modelMatrix; :: 모델의 정보를 담음
-      //attribute vec3 position; :: 정점 데이터를 담음
-      // uniform mat4 modelViewMatrix :: viewMatrix * modelMatrix
-
-      vertexShader: `
-        uniform mat4 projectionMatrix;
-        uniform mat4 viewMatrix;
-        uniform mat4 modelMatrix;
-        uniform mat4 modelViewMatrix;
-
-        attribute vec3 position;
-      
-        void main() {
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 0.1);
-        }
-      `,
-      //precision mediump float; 정밀도를 미디엄으로 설정
-      fragmentShader: `
-      precision mediump float;
-
-      void main() {
-        gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
-      }
-      `,
+      vertexShader,
+      fragmentShader,
     });
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);

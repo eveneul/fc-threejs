@@ -41,7 +41,7 @@ class App {
       fragmentShader,
     });
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.y = 1;
+
     scene.add(mesh);
 
     const verticesCount = geometry.attributes.position.count;
@@ -55,6 +55,8 @@ class App {
       "aRandomPosition",
       new THREE.BufferAttribute(randomPositions, 1)
     );
+
+    console.log(mesh.position);
 
     /**
      * Light
@@ -73,7 +75,7 @@ class App {
       0.1,
       100
     );
-    camera.position.z = 15;
+    camera.position.z = 20;
 
     /**
      * Controls

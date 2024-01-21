@@ -44,18 +44,11 @@ class App {
     // const cube = new Cube();
     // scene.add(cube.mesh);
 
-    const geometry = new THREE.PlaneGeometry(1, 965 / 720, 16, 16);
-    const material = new THREE.ShaderMaterial({
-      color: 0x00ff00,
-      wireframe: false,
+    const geometry = new THREE.PlaneGeometry(1, 1, 16, 16);
+    const material = new THREE.RawShaderMaterial({
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
       side: THREE.DoubleSide,
-      uniforms: {
-        uTime: { value: 0 },
-        uTexture: { value: texureLoader.load("/images/new-beginnings.jpg") },
-      },
-      vertexShader,
-      fragmentShader,
-      glslVersion: THREE.GLSL3, // webGL2를 사용한다고 명시
     });
     const mesh = new THREE.Mesh(geometry, material);
 
@@ -92,7 +85,7 @@ class App {
       0.1,
       100
     );
-    camera.position.z = 10;
+    camera.position.z = 1.5;
 
     /**
      * Controls
@@ -128,8 +121,6 @@ class App {
   render() {
     this.update();
     this.renderer.render(this.scene, this.camera);
-
-    this.material.uniforms.uTime.value = this.clock.getElapsedTime();
 
     requestAnimationFrame(this.render.bind(this));
     this.controls.update();

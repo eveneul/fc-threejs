@@ -55,6 +55,7 @@ class App {
       },
       vertexShader,
       fragmentShader,
+      glslVersion: THREE.GLSL3, // webGL2를 사용한다고 명시
     });
     const mesh = new THREE.Mesh(geometry, material);
 

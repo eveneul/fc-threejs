@@ -2,14 +2,14 @@
 
 uniform sampler2D uTexture;
 
-varying float vRandomPosition;
-varying vec2 vUv;
+in float vRandomPosition;
+in vec2 vUv;
 
-
+out vec4 myFragColor;
 
 void main() {
 
-  vec4 tex = texture2D(uTexture, vUv);
+  vec4 tex = texture(uTexture, vUv);
 
-  gl_FragColor = tex;
+  myFragColor = tex * vRandomPosition;
 }

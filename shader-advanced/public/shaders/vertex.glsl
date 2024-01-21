@@ -6,11 +6,11 @@
 
 uniform float uTime;
 
-attribute float aRandomPosition;
+in float aRandomPosition;
 
 
-varying float vRandomPosition;
-varying vec2 vUv;
+out float vRandomPosition;
+out vec2 vUv;
 
 
 void main() {

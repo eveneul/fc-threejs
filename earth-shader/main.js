@@ -106,12 +106,15 @@ const postProcessing = () => {
   effectComposer.addPass(renderPass);
 
   const filmPass = new FilmPass();
-  // effectComposer.addPass(filmPass);
+  effectComposer.addPass(filmPass);
 
   const unrealBloomPass = new UnrealBloomPass(
     new THREE.Vector2(sizes.width, sizes.height)
   );
-  // effectComposer.addPass(unrealBloomPass);
+  unrealBloomPass.strength = 0.4;
+  unrealBloomPass.threshold = 0.2;
+  unrealBloomPass.radius = 0.7;
+  effectComposer.addPass(unrealBloomPass);
 
   const shaderPass = new ShaderPass(GammaCorrectionShader);
 
@@ -146,6 +149,7 @@ const renderer = new THREE.WebGLRenderer({
   alpha: true,
 });
 renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.setClearColor(0x333333, 1);
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
 
@@ -158,9 +162,17 @@ const effectComposer = new EffectComposer(renderer, renderTarget);
  * Animate
  */
 
+const clock = new THREE.Clock();
+let oldTime = 0;
+
 const animate = () => {
   requestAnimationFrame(animate);
 
+  const time = clock.getElapsedTime();
+  let curvelength = curve.geometry.drawRange.count;
+  const curveProgress = time / 2.5;
+  const speed = 3;
+  curvelength = curveProgress * 960 * speed;
   renderer.render(scene, camera);
 
   objectGroup.rotation.y += 0.0005;
@@ -168,6 +180,8 @@ const animate = () => {
 
   star.mesh.rotation.x += 0.001;
   star.mesh.rotation.y += 0.001;
+
+  curve.geometry.setDrawRange(0, curvelength); // 영역을 어디까지 그릴지 지정하는 함수
 
   controls.update();
   effectComposer.render();

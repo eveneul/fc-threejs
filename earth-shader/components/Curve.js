@@ -23,11 +23,11 @@ export default class Curve extends BaseObject {
 
     const curve = new THREE.CatmullRomCurve3(points);
     console.log(curve);
-    const geometry = new THREE.TubeGeometry(curve, 20, 0.01);
+    this.geometry = new THREE.TubeGeometry(curve, 20, 0.01);
 
     const graidentCanvas = getGradientCanvas("#757F94", "#263D74");
     const texture = new THREE.CanvasTexture(graidentCanvas);
     const material = new THREE.MeshBasicMaterial({ map: texture });
-    this.mesh = new THREE.Mesh(geometry, material);
+    this.mesh = new THREE.Mesh(this.geometry, material);
   }
 }

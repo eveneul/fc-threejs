@@ -17,6 +17,7 @@ export default class Point extends BaseObject {
       new THREE.TorusGeometry(0.02, 0.002, 20, 20),
       new THREE.MeshBasicMaterial({
         color: 0x263d64,
+        transparent: true,
       })
     );
 

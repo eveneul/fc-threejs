@@ -26,6 +26,12 @@ class App {
     const scene = new THREE.Scene();
 
     /**
+     * Texture
+     */
+
+    const texureLoader = new THREE.TextureLoader();
+
+    /**
      * Clock
      */
 
@@ -38,13 +44,14 @@ class App {
     // const cube = new Cube();
     // scene.add(cube.mesh);
 
-    const geometry = new THREE.PlaneGeometry(1, 1, 16, 16);
+    const geometry = new THREE.PlaneGeometry(1, 965 / 720, 16, 16);
     const material = new THREE.RawShaderMaterial({
       color: 0x00ff00,
       wireframe: false,
       side: THREE.DoubleSide,
       uniforms: {
         uTime: { value: 0 },
+        uTexture: { value: texureLoader.load("/images/new-beginnings.jpg") },
       },
       vertexShader,
       fragmentShader,

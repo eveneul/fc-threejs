@@ -17,9 +17,18 @@ const vertexShader = gl.createShader(gl.VERTEX_SHADER);
 gl.shaderSource(vertexShader, `
 
 attribute vec2 position;
+varying vec2 vPosition; 
+// fragment shader에 전달할 vPosition 변수 생성
 
 void main () {
+  vec2 newPosition = (position + 1.0) / 2.0;
+  // position + 1.0 => position은 -1 ~ 1, 1을 더해 주면 0 ~ 2,  여기에서 2를 나눠 주면 0에서 1사이의 값으로 떨어짐
+
+
   gl_Position = vec4(position, 0.0, 1.0);
+
+  vPosition = newPosition;
+  // 주의 :: position은 -1 ~ 1사이의 값, newPosition은 0에서 1사이의 값
 }
 `)
 
@@ -32,8 +41,11 @@ gl.shaderSource(fragmentShader, `
 precision mediump float;
 // 색상과 조명 같은 값은 정확도와 성능을 조절하는 데에 영향을 끼침 // mediump => 중간 정도의 정밀도와 성능 제공, 보편적으로 사용
 
+varying vec2 vPosition;
+// vertex shader에서 전달받은 vPosition
+
 void main () {
-  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  gl_FragColor = vec4(vPosition, 0.0, 1.0);
 }
 `)
 gl.compileShader(fragmentShader)

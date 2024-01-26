@@ -19,9 +19,8 @@ const scene = new THREE.Scene();
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 
-const geometry = new THREE.PlaneGeometry(4, 4, 32, 32);
+const geometry = new THREE.PlaneGeometry(1, 1, 32, 32);
 const material = new THREE.RawShaderMaterial({
-  color: 0x00ff00,
   side: THREE.DoubleSide,
   uniforms: {},
   vertexShader: vertexShader,
@@ -32,7 +31,7 @@ const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000);
-camera.position.z = 2;
+camera.position.z = 1;
 
 const light = new THREE.AmbientLight(0xffffff);
 scene.add(light);

@@ -5,15 +5,18 @@ uniform float uTime;
 
 attribute vec3 position;
 attribute float aRandomPosition;
+attribute vec2 uv;
 
 varying float vRandomPosition;
+varying vec2 vUv;
 
 void main () {
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  modelPosition.z += aRandomPosition * uTime;
+  // modelPosition.z += aRandomPosition / uTime;
   gl_Position = projectionMatrix * viewMatrix * modelPosition;
 
   vRandomPosition = (aRandomPosition + 1.0) / 2.0;
+  vUv = uv;
 }
 
 //  uniform mat4 projectionMatrix; 

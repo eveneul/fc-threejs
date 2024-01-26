@@ -12,6 +12,7 @@ canvas.height = window.innerHeight;
 const scene = new THREE.Scene();
 
 const clock = new THREE.Clock();
+const textureLoader = new THREE.TextureLoader();
 
 const geometry = new THREE.PlaneGeometry(1, 1, 32, 32);
 const material = new THREE.RawShaderMaterial({
@@ -19,6 +20,7 @@ const material = new THREE.RawShaderMaterial({
   side: THREE.DoubleSide,
   uniforms: {
     uTime: { value: 0 },
+    uTexture: { value: textureLoader.load("/gom.jpeg") },
   },
   vertexShader: vertexShader,
   fragmentShader: fragmentShader,

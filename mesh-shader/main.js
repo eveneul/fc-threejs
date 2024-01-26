@@ -11,7 +11,7 @@ canvas.height = window.innerHeight;
 
 const scene = new THREE.Scene();
 
-const geometry = new THREE.PlaneGeometry(1, 1, 16, 16);
+const geometry = new THREE.PlaneGeometry(1, 1, 32, 32);
 const material = new THREE.RawShaderMaterial({
   color: 0x00ff00,
   side: THREE.DoubleSide,
@@ -19,6 +19,16 @@ const material = new THREE.RawShaderMaterial({
   fragmentShader: fragmentShader,
 });
 
+const count = geometry.attributes.position.count;
+const randomPosition = new Float32Array(count);
+
+for (let i = 0; i < count; i++) {
+  randomPosition[i] = (Math.random() - 0.5) * 2;
+}
+
+geometry.setAttribute("aRandomPosition", new THREE.BufferAttribute(randomPosition, 1));
+
+console.log(geometry);
 // material onBeforeCompile => 머터리얼이 컴파일 되기 전에 호출하는 콜백함수
 
 const mesh = new THREE.Mesh(geometry, material);

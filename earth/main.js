@@ -25,13 +25,9 @@ renderer.setSize(canvasSize.width, canvasSize.height);
 // 현재 디바이스 픽셀의 비율에 맞는 값
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-const renderTarget = new THREE.WebGLRenderTarget(
-  canvasSize.width,
-  canvasSize.height,
-  {
-    samples: 2, // 점과 점 사이를 더 부드럽게
-  }
-);
+const renderTarget = new THREE.WebGLRenderTarget(canvasSize.width, canvasSize.height, {
+  samples: 2, // 점과 점 사이를 더 부드럽게
+});
 
 const textureLoader = new THREE.TextureLoader();
 const cubeTextureLoader = new THREE.CubeTextureLoader();
@@ -54,8 +50,8 @@ const createEarth1 = () => {
   const material = new THREE.MeshStandardMaterial({
     map: earthMap,
     side: THREE.FrontSide,
-    opacity: 0.6,
-    transparent: true,
+    opacity: 1,
+    // transparent: true,
   });
   const geometry = new THREE.SphereGeometry(1.3, 30, 30);
   const mesh = new THREE.Mesh(geometry, material);
@@ -70,8 +66,8 @@ const createEarth1 = () => {
 const createEarth2 = () => {
   const material = new THREE.MeshStandardMaterial({
     map: earthMap,
-    opacity: 0.9,
-    transparent: true, // 투명도가 제대로 반영이 된다
+    opacity: 1,
+    // transparent: true, // 투명도가 제대로 반영이 된다
     side: THREE.BackSide, // 뒤쪽만 렌더링
   });
   const geometry = new THREE.SphereGeometry(1.5, 30, 30);
@@ -178,11 +174,11 @@ const create = () => {
   const point2 = createPoint2();
   const curve = createCurve(point1.position, point2.position);
 
-  group.add(earth1, earth2, point1, point2, curve);
+  group.add(earth1, earth2, point1, point2, curve, star);
 
-  scene.add(star, group);
+  scene.add(group);
 
-  return { group, star };
+  return { group };
 };
 
 const addLight = () => {
@@ -231,17 +227,13 @@ const addPostEffects = (obj) => {
   // unrealBloomPass.radius = 0.9;
   // // effectComposer.addPass(unrealBloomPass); // 감마 패스 끄고 사용 (너무 뽀샤시해짐)
 
-  const outlinePass = new OutlinePass(
-    new THREE.Vector2(canvasSize.width, canvasSize.height),
-    scene,
-    camera
-  );
+  const outlinePass = new OutlinePass(new THREE.Vector2(canvasSize.width, canvasSize.height), scene, camera);
   outlinePass.selectedObjects = [...group.children];
   // outlinePass.edgeGlow = 3; // 테두리  글로우
   // outlinePass.edgeStrength = 1; // 테두리 굵기
   // outlinePass.pulsePeriod = 5; // 테두리가 굵어졌다가 안 굵어졌다가
 
-  effectComposer.addPass(outlinePass);
+  // effectComposer.addPass(outlinePass);
 
   const shaderPass = new ShaderPass(GammaCorrectionShader);
   effectComposer.addPass(shaderPass);
@@ -253,12 +245,7 @@ const addPostEffects = (obj) => {
 const container = document.querySelector(".container");
 container.appendChild(renderer.domElement);
 
-const camera = new THREE.PerspectiveCamera(
-  75,
-  canvasSize.width / canvasSize.height,
-  0.1,
-  100
-);
+const camera = new THREE.PerspectiveCamera(75, canvasSize.width / canvasSize.height, 0.1, 100);
 camera.position.z = 3;
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -275,8 +262,8 @@ const draw = (obj) => {
   group.rotation.x += 0.0005;
   group.rotation.y += 0.0005;
 
-  star.rotation.x += 0.001;
-  star.rotation.y += 0.001;
+  // star.rotation.x += 0.001;
+  // star.rotation.y += 0.001;
 };
 
 const init = () => {

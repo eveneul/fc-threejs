@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import vertexShader from "./src/shader/vertexShader.glsl?raw";
+import fragmentShader from "./src/shader/fragmentShader.glsl?raw";
 
 const canvas = document.createElement("canvas");
 document.getElementById("app").appendChild(canvas);
@@ -8,10 +10,18 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const scene = new THREE.Scene();
-const mesh = new THREE.Mesh(
-  new THREE.PlaneGeometry(1, 1, 16, 16),
-  new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide })
-);
+
+const geometry = new THREE.PlaneGeometry(1, 1, 16, 16);
+const material = new THREE.RawShaderMaterial({
+  color: 0x00ff00,
+  side: THREE.DoubleSide,
+  vertexShader: vertexShader,
+  fragmentShader: fragmentShader,
+});
+
+// material onBeforeCompile => 머터리얼이 컴파일 되기 전에 호출하는 콜백함수
+
+const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);

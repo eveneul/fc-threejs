@@ -1,0 +1,22 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "threejs",
+  "steps": [
+    {
+      "file": "mesh-shader/main.js",
+      "description": "### three.js shader mesh",
+      "line": 11
+    },
+    {
+      "file": "mesh-shader/src/shader/vertexShader.glsl",
+      "description": "### vertexshader",
+      "line": 1
+    },
+    {
+      "file": "mesh-shader/src/shader/fragmentShader.glsl",
+      "description": "##fragment shader",
+      "line": 1
+    }
+  ],
+  "ref": "master"
+}

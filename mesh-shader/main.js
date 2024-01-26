@@ -11,10 +11,15 @@ canvas.height = window.innerHeight;
 
 const scene = new THREE.Scene();
 
+const clock = new THREE.Clock();
+
 const geometry = new THREE.PlaneGeometry(1, 1, 32, 32);
 const material = new THREE.RawShaderMaterial({
   color: 0x00ff00,
   side: THREE.DoubleSide,
+  uniforms: {
+    uTime: { value: 0 },
+  },
   vertexShader: vertexShader,
   fragmentShader: fragmentShader,
 });
@@ -51,6 +56,7 @@ const render = () => {
   requestAnimationFrame(render);
   renderer.render(scene, camera);
   controls.update();
+  material.uniforms.uTime.value = clock.getElapsedTime();
 };
 
 render();

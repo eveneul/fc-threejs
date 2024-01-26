@@ -12,11 +12,15 @@ varying vec2 vUv;
 
 void main () {
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  // modelPosition.z += aRandomPosition / uTime;
-  gl_Position = projectionMatrix * viewMatrix * modelPosition;
+  // modelPosition.z += aRandomPosition / 20.0 * sin(uTime);
+  modelPosition.z += sin(uTime + modelPosition.y);
+
 
   vRandomPosition = (aRandomPosition + 1.0) / 2.0;
+  // vRandomPosition /= uTime * 0.3;
   vUv = uv;
+
+  gl_Position = projectionMatrix * viewMatrix * modelPosition;
 }
 
 //  uniform mat4 projectionMatrix; 

@@ -12,5 +12,5 @@ void main() {
 
   vec4 tex = texture2D(uTexture, vUv);
 
-  gl_FragColor = tex;
+  gl_FragColor = tex * vRandomPosition; 
 }

@@ -2,6 +2,7 @@ import * as THREE from "three";
 import vertexShader from "./shaders/vertexshader.glsl?raw";
 import fragmentShader from "./shaders/fragmentshader.glsl?raw";
 import ASScroll from "@ashthornton/asscroll";
+import gsap from "gsap";
 
 const scroll = new ASScroll({
   disableRaf: true,
@@ -112,12 +113,20 @@ const addEvent = () => {
 
   imageRepository.forEach(({ img, mesh }) => {
     img.addEventListener("mouseenter", () => {
-      mesh.material.uniforms.uHover.value = 1;
+      gsap.to(mesh.material.uniforms.uHover, {
+        value: 1,
+        duration: 0.3,
+        ease: "power1.inOut",
+      });
       console.log("hover");
     });
 
     img.addEventListener("mouseleave", () => {
-      mesh.material.uniforms.uHover.value = 0;
+      gsap.to(mesh.material.uniforms.uHover, {
+        value: 0,
+        duration: 0.3,
+        ease: "power1.inOut",
+      });
     });
   });
 };

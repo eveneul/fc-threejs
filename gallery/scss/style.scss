@@ -14,6 +14,8 @@ a {
   text-decoration: none;
 }
 
+
+
 header {
   nav {
     ul {
@@ -76,7 +78,10 @@ main {
 
       img {
         width: 100%;
-        visibility: hidden;
+        // visibility: hidden;
+        opacity: 0;
+        position: relative;
+        z-index: 2;
       }
 
     }
@@ -128,8 +133,6 @@ footer {
   position: fixed;
   top: 0;
   right: 0;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
+
+  z-index: -1;
 }

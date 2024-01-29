@@ -62,7 +62,9 @@ main .content .img-wrapper {
 }
 main .content .img-wrapper img {
   width: 100%;
-  visibility: hidden;
+  opacity: 0;
+  position: relative;
+  z-index: 2;
 }
 main .content .desc {
   padding: 15px 30px;
@@ -101,8 +103,5 @@ footer {
   position: fixed;
   top: 0;
   right: 0;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
+  z-index: -1;
 }/*# sourceMappingURL=style.css.map */

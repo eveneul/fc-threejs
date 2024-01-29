@@ -45,20 +45,26 @@ const imageRepository = [];
 
 const textureLoader = new THREE.TextureLoader();
 
+const clock = new THREE.Clock();
+
 const createImages = (images) => {
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      uTexture: { value: null },
+      uTime: { value: 0 },
+      uHover: { value: 0 },
+    },
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+    side: THREE.DoubleSide,
+  });
   const imageMeshes = images.map((image) => {
     const { width, height, top, left } = image.getBoundingClientRect();
 
     const geometry = new THREE.PlaneGeometry(width, height, 16, 16);
-    const material = new THREE.ShaderMaterial({
-      uniforms: {
-        uTexture: { value: textureLoader.load(image.src) },
-      },
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      side: THREE.DoubleSide,
-    });
-    const mesh = new THREE.Mesh(geometry, material);
+    const cloneMaterial = material.clone();
+    cloneMaterial.uniforms.uTexture.value = textureLoader.load(image.src);
+    const mesh = new THREE.Mesh(geometry, cloneMaterial);
 
     imageRepository.push({ img: image, mesh });
     return mesh;
@@ -103,12 +109,26 @@ function retransform() {
 
 const addEvent = () => {
   window.addEventListener("resize", resize);
+
+  imageRepository.forEach(({ img, mesh }) => {
+    img.addEventListener("mouseenter", () => {
+      mesh.material.uniforms.uHover.value = 1;
+      console.log("hover");
+    });
+
+    img.addEventListener("mouseleave", () => {
+      mesh.material.uniforms.uHover.value = 0;
+    });
+  });
 };
 
 const draw = () => {
   renderer.render(scene, camera);
   retransform();
   scroll.update();
+  imageRepository.forEach(({ img, mesh }) => {
+    mesh.material.uniforms.uTime.value = clock.getElapsedTime();
+  });
   requestAnimationFrame(() => {
     draw();
   });

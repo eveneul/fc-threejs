@@ -1,10 +1,8 @@
 import * as THREE from "three";
 import { AmbientLight } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import vertexShader from "./shaders/earth/vertexShader.glsl?raw";
-import fragmentShader from "./shaders/earth/fragmentShader.glsl?raw";
-import pointVertexShader from "./shaders/earth-points/vertexShader.glsl?raw";
-import pointFragmentShader from "./shaders/earth-points/fragmentShader.glsl?raw";
+import earthVertexshader from "./shaders/earth/vertexShader.glsl?raw";
+import earthFragmentShader from "./shaders/earth/fragmentShader.glsl?raw";
 
 /**
  * Sizes
@@ -35,38 +33,21 @@ const textureLoader = new THREE.TextureLoader();
 /**
  * Object
  */
-const earthGeometry = new THREE.SphereGeometry(1, 30, 30);
+
+const earthGeomatry = new THREE.SphereGeometry(1, 32, 32);
 const earthMaterial = new THREE.ShaderMaterial({
-  transparent: true,
   side: THREE.DoubleSide,
-  // depthWrite: false,
+
   uniforms: {
     uTexture: { value: textureLoader.load("/earth.png") },
   },
-  vertexShader: vertexShader,
-  fragmentShader: fragmentShader,
+  vertexShader: earthVertexshader,
+  fragmentShader: earthFragmentShader,
+  transparent: true,
 });
 
-const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
-scene.add(earthMesh);
-
-const pointGeomatry = new THREE.IcosahedronGeometry(1.1, 40, 40);
-const pointMaterial = new THREE.ShaderMaterial({
-  wireframe: true,
-  uniforms: {
-    transparent: true,
-    side: THREE.DoubleSide,
-
-    uTexture: { value: textureLoader.load("/earth.png") },
-  },
-  vertexShader: pointVertexShader,
-  fragmentShader: pointFragmentShader,
-});
-
-pointGeomatry.rotateY(-Math.PI);
-
-const pointMesh = new THREE.Mesh(pointGeomatry, pointMaterial);
-scene.add(pointMesh);
+const earth = new THREE.Mesh(earthGeomatry, earthMaterial);
+scene.add(earth);
 
 /**
  * Light
